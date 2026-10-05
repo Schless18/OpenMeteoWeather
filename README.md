@@ -27,8 +27,8 @@ The analytical output centers on structured, dimensional datasets tailored for w
 
 ## Tools & Technologies
 
-* **Platform:** Databricks (Serverless / Modern Compute)
-* **Governance & Storage:** Unity Catalog, Unity Catalog Volumes, Delta Lake
+* **Platform:** Databricks
+* **Governance & Storage:** Unity Catalog Volumes, Delta Lake
 * **Languages:** Python (PySpark, Requests), Databricks SQL (CTEs, Window Functions, Aggregate Functions, Conditional Logic)
 * **Data Architecture:** Medallion Architecture (Bronze ➔ Silver ➔ Gold)
 * **External API:** Open-Meteo Forecast & Geocoding REST API
