@@ -1,0 +1,77 @@
+#Importng libraries
+import requests
+import json
+from datetime import datetime
+from pyspark.sql.functions import explode, arrays_zip, col, to_date
+
+# Set Catalog Context
+spark.sql("use catalog openmeteo")
+spark.sql("use schema default")
+
+# Creates a volume
+volume_path = "/Volumes/openmeteo/default/raw_weather"
+dbutils.fs.mkdirs(volume_path)
+
+# Clears old JSON files with outdated schemas
+dbutils.fs.rm(volume_path, recurse=True)
+dbutils.fs.mkdirs(volume_path)
+
+# -------------------------------------
+# Bronze layer starts
+# -------------------------------------
+
+# Locations
+def get_coordinates(city_name):
+    # Search city using Open-Meteo endpoint
+    url = f"https://geocoding-api.open-meteo.com/v1/search?name={city_name}&count=1&language=en&format=json"
+    response = requests.get(url).json()
+    # if loop, to validate if city exists
+    if "results" in response and len(response["results"]) > 0:
+        result = response["results"][0]
+        return {
+            "city": result["name"],
+            "lat": result["latitude"],
+            "lon": result["longitude"],
+            "country": result.get("country", "Unkown")
+        } 
+    else:
+        raise ValueError(f"The City of '{city_name}' was not found.")
+        return None 
+
+# Define Cities
+city_list = ["Mexico City", "London", "Sydney", "Vienna", "Berlin", "Vancouver", "Toronto", "Tokyo", "Seoul", "New York", "San Francisco", "Moscow", "Oslo", "Madrid", "Barcelona", "Wiener Neustadt", "Salzburg", "Munich", "Zurich", "Edinburgh"] 
+# Retrives Coordinates daynamically
+locations = [get_coordinates(city) for city in city_list]
+# Timestamp
+timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+# Metrics
+metrics = "temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,wind_speed_10m_max,daylight_duration,sunshine_duration"
+
+# Ingest weather data per location and write raw JSON
+succes_count = 0
+# for loop starts
+for loc in locations:
+    city = loc["city"]
+    lat = loc["lat"]
+    lon = loc["lon"]
+    # Weather URL 
+    weather_url = (
+        f"https://api.open-meteo.com/v1/forecast?"
+        f"latitude={loc['lat']}&longitude={loc['lon']}"
+        f"&daily={metrics}&timezone=UTC"
+    )
+    response = requests.get(weather_url).json()
+    # Check if API returned an error payload
+    if "error" in response:
+        print(f"❌ Error fetching {loc['city']}: {response.get('reason')}")
+        continue
+    # Enrich payload with metadata
+    response["city"] = city
+    response["country"] = loc["country"]
+    response["ingestion_timestamp"] = timestamp
+    # Save to Bornze Volume Storage
+    file_path = f"{volume_path}/{city}_{timestamp}.json"
+    dbutils.fs.put(file_path, json.dumps(response), overwrite=True)
+    succes_count += 1
+
+print(f"Bronze Layer Complete: {len(locations)} raw JSON files written to {volume_path}")
