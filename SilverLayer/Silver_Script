@@ -1,0 +1,55 @@
+# Importing Libraries
+from pyspark.sql.functions import explode, arrays_zip, col, to_date
+
+# Catalog Context
+spark.sql("USE CATALOG openmeteo")
+spark.sql("USE SCHEMA default")
+
+volume_path =  "Volumes/openmeteo/default/raw_weather"
+
+# -------------------------------------
+# Silver layer starts
+# -------------------------------------
+
+# Read all the Bronze Files
+df_raw = spark.sql("SELECT * FROM json.`/Volumes/openmeteo/default/raw_weather/*.json`")
+
+# Creating tabular rows
+df_flat = df_raw.select(
+    col("city"),
+    col("country"),
+    col("latitude"),
+    col("longitude"),
+    explode(arrays_zip(
+        col("daily.time"),
+        col("daily.temperature_2m_max"),
+        col("daily.temperature_2m_min"),
+        col("daily.precipitation_sum"),
+        col("daily.apparent_temperature_max"),
+        col("daily.apparent_temperature_min"),
+        col("daily.wind_speed_10m_max"),
+        col("daily.daylight_duration"),
+        col("daily.sunshine_duration")
+    )).alias("weather")
+).select(
+    col("city"),
+    col("country"),
+    col("latitude"),
+    col("longitude"),
+    to_date(col("weather.time")).alias("date"),
+    col("weather.temperature_2m_max").cast("double").alias("temp_max"),
+    col("weather.temperature_2m_min").cast("double").alias("temp_min"),
+    col("weather.apparent_temperature_max").cast("double").alias("apparent_temperature_max"),
+    col("weather.apparent_temperature_min").cast("double").alias("apparent_temperature_min"),
+    col("weather.precipitation_sum").cast("double").alias("precipitation"),
+    col("weather.wind_speed_10m_max").cast("double").alias("wind_speed_max"),
+    col("weather.daylight_duration").cast("double").alias("daylight_duration_sec"),
+    col("weather.sunshine_duration").cast("double").alias("sunshine_duration_sec")
+
+# Temporary view
+df_flat.createOrReplaceTempView("staged_weather")
+
+# Creates or Updates the Silver Table
+spark.sql("CREATE OR REPLACE TABLE openmeteo.default.weather_daily AS SELECT * FROM staged_weather")
+
+print("✅ Silver Layer Execution Complete! Data staged and merged.")
