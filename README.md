@@ -1,4 +1,3 @@
-# OpenMeteoWeather
 # 🌤️ Open-Meteo Weather Data Pipeline &amp; Analytics 
 
 ## Project Summary  
@@ -12,3 +11,26 @@ This project transforms raw, unstructured REST API responses into business-ready
 * **Atmospheric & Solar Analysis:** Evaluating thermal comfort spreads (`temp_max` vs. `sensation_max_temp`), wind intensity, daylight availability, and solar radiation efficiency ratios.
 * **City-Level Performance Summaries:** Aggregating historical weather metrics across global climate regions to report temperature extremes, total precipitation, and average daily sunshine hours.
 
+## Data Architecture (Medallion Pipeline)
+
+Data flows progressively through three layers inside Databricks using Unity Catalog and Unity Catalog Volumes:
+* **Bronze Layer (Raw Ingestion):** Dynamically fetches multi-variable weather forecasts from the Open-Meteo REST API for 20 global cities and lands raw JSON payloads into Unity Catalog Volumes (`/Volumes/openmeteo/default/raw_weather/`).
+* **Silver Layer (Cleaning & Enriched):** Direct Spark SQL parsing flattens nested arrays via `explode` and `arrays_zip`, standardizes data types, renames complex API variables (e.g., mapping `apparent_temperature` to `sensation_temp`), and materializes a structured Delta table (`openmeteo.default.weather_daily`).
+* **Gold Layer (Curated Analytics):** Materializes aggregated analytical views and windowed metrics optimized for executive dashboards and BI reporting tools.
+
+## Data Model 
+
+The analytical output centers on structured, dimensional datasets tailored for weather metrics and spatial reporting:
+
+* **Primary Fact/Analytics Table:** `gold_weather_analytics` (Contains daily granular weather observations, rolling moving averages, sunshine ratios, and anomaly flags).
+* **Summary Dimension Table:** `gold_city_weekly_summary` (Contains aggregated city-level KPIs, temperature extremes, total rainfall, and average daily sunshine hours).
+
+## Tools & Technologies
+
+* **Platform:** Databricks (Serverless / Modern Compute)
+* **Governance & Storage:** Unity Catalog, Unity Catalog Volumes, Delta Lake
+* **Languages:** Python (PySpark, Requests), Databricks SQL (CTEs, Window Functions, Aggregate Functions, Conditional Logic)
+* **Data Architecture:** Medallion Architecture (Bronze ➔ Silver ➔ Gold)
+* **External API:** Open-Meteo Forecast & Geocoding REST API
+
+## Key Analysis & Gold Layer Deliverables
