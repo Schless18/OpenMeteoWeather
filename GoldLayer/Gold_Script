@@ -1,0 +1,59 @@
+# Set Catalog Context
+spark.sql("USE CATALOG openmeteo")
+spark.sql("USE SCHEMA default")
+
+# Gold Daily Analytics
+spark.sql("""
+    CREATE OR REPLACE TABLE openmeteo.default.gold_weather_analytics AS
+    SELECT
+        city,
+        country,
+        latitude,
+        longitude,
+        date,
+        -- Core Temeperatues and Spread
+        temp_max,
+        temp_min,
+        ROUND(temp_max - temp_min, 2) AS temp_range,
+        apparent_temperature_max,
+        apparent_temperature_min,
+        -- Precipitation & Wind
+        precipitation,
+        wind_speed_max,
+        -- Daylight & Sunshine (seconds --> hours)
+        ROUND(daylight_duration_sec/3600, 2) AS daylight_hours,
+        ROUND(sunshine_duration_sec/3600, 2) AS sunshine_hours,
+        ROUND((sunshine_duration_sec/NULLIF(daylight_duration_sec, 0)) * 100, 1) AS sunshine_ratio_pct,
+        -- 3-Day Average Temperature
+        ROUND(AVG(temp_max) OVER (PARTITION BY city ORDER BY date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 2) AS temp_max_3day_avg,
+        -- Anomaly Flag > 5°C above 3-day moving average
+        CASE WHEN temp_max > (AVG(temp_max) OVER(PARTITION BY city ORDER BY date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) + 5) THEN 'TRUE'
+        ELSE 'FALSE' END AS heat_anomaly
+    -- Selecting where the data need to be taken from
+    FROM openmeteo.default.weather_daily;
+""")
+
+print("Created 'openmeteo.default.gold_weather_analytics' successfully")
+
+
+# Weekly City Summary Aggregations
+spark.sql(""" 
+    CREATE OR REPLACE TABLE openmeteo.default.gold_weather_summary AS
+    SELECT
+        city,
+        country,
+        COUNT(date) AS days_tracked,
+        ROUND(AVG(temp_max), 2) AS avg_max_temp,
+        ROUND(AVG(temp_min), 2) AS avg_min_temp,
+        ROUND(AVG(apparent_temperature_max), 2) AS avg_apparent_max_temp,
+        MAX(temp_max) AS record_max_temp,
+        MIN(temp_min) AS record_min_temp,
+        ROUND(SUM(precipitation), 2) AS total_precipitation_mm,
+        MAX(wind_speed_max) AS max_wind_speed_kmh,
+        ROUND(AVG(sunshine_duration_sec/3600), 2) AS avg_daily_sunshine_hours
+    FROM openmeteo.default.weather_daily
+    GROUP BY city, country;
+""")
+
+print("Created 'openmeteo.default.gold_city_weekly_summary' successfully")
+print("✅ Gold Layer Execution Successful")
