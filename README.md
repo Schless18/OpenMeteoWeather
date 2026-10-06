@@ -49,6 +49,6 @@ Visual 2 (Comparative & Risk Analysis):
 
 Visual 3 (Extreme Weather & Risk Dashboard):
 ![Low_temp/Precipitation](Graphs/Weather_3.png)
-* **Coldest Locations Analysis:** Moscow captures the lowest minimum temperature at **3.10 °C**, closely followed by Wiener Neustadt (~4 °C) and Toronto (~4.5 °C)[cite: 4]. Conversely, coastal and southern locations like Barcelona anchor the upper bound of record minimums at **17.20 °C**[cite: 4].
-* **Precipitation Distribution:** Rainfall accumulation is heavily concentrated in a few key metropolitan areas, peaking with Mexico City at **74.10 mm** and Madrid at **58.30 mm**[cite: 4]. Most remaining cities recorded under **25 mm** during the observed period.
-* **Macro KPI Highlights:** Establishes key threshold metrics across all monitored regions—pinpointing the absolute minimum temperature benchmark (**3.10 °C**) and peak cumulative rainfall (**74.10 mm**)[cite: 4].
+* **Coldest Locations Analysis:** Moscow captures the lowest minimum temperature at **3.10 °C**, closely followed by Wiener Neustadt (~4 °C) and Toronto (~4.5 °C). Conversely, coastal and southern locations like Barcelona anchor the upper bound of record minimums at **17.20 °C**.
+* **Precipitation Distribution:** Rainfall accumulation is heavily concentrated in a few key metropolitan areas, peaking with Mexico City at **74.10 mm** and Madrid at **58.30 mm**. Most remaining cities recorded under **25 mm** during the observed period.
+* **Macro KPI Highlights:** Establishes key threshold metrics across all monitored regions—pinpointing the absolute minimum temperature benchmark (**3.10 °C**) and peak cumulative rainfall (**74.10 mm**).
