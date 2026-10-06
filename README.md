@@ -37,15 +37,18 @@ The analytical output centers on structured, dimensional datasets tailored for w
 
 Visual 1 (General Overview): 
 ![Temperature_Trends/Daylight/Shunshine](Graphs/Weather_1.png)
-- Operational Metrics: Establishes cross-city macro-climate baselines across temperature trends, solar duration, and wind profiles.
-- Data Ingestion: Aggregates processed multi-region metrics from the Medallion Gold summary layer to provide an initial high-level exploratory view.
+* **Temperature Trends & Variance:** Peak temperature reached near **29°C on Oct 02**, followed by a steady cooling trend down to ~18°C by Oct 07. "Feels Like" temperatures consistently track below actual maximums toward the end of the period, indicating drier air or cooling wind conditions.
+* **Solar Potential Efficiency:** New York demonstrates exceptionally high solar efficiency, with **Sunshine Hours (~11.4 hrs)** matching nearly **100% of available Daylight Hours (~11.8 hrs)**, reflecting minimal cloud cover interference.
 
 Visual 2 (Comparative & Risk Analysis): 
 ![Temperature/Severe_Weather](Graphs/Weather_2.png)
-- Actual vs. "Feels Like" Discrepancy: Evaluates humidity and wind chill divergence using a Clustered Bar Chart to assess real thermal impact across monitored urban hubs.
-- Severe Weather Vulnerability Matrix: Maps Maximum Wind Speed (km/h) against Total Precipitation (mm) in a Scatter Plot to isolate severe weather outliers (e.g., high precipitation in Mexico City and Madrid, elevated wind risks in coastal Sydney).
+* **Perceived vs. Actual Temperature Variance:** San Francisco leads overall peak temperatures near **28°C**, closely matching its "Feels Like" index. In contrast, locations like Wiener Neustadt, Vienna, and New York display a noticeable drop in perceived temperature relative to maximum recorded levels—signaling strong wind chill or low relative humidity during warm spells.
+* **Severe Weather Vulnerability Profiling:** The multi-variable scatter plot maps operational exposure by plotting peak wind gusts (`max_wind_speed_kmh`) against cumulative rainfall (`total_precipitation_mm`):
+  * **High Wind Risk:** Sydney stands out with severe wind activity exceeding **32 km/h**, despite low total precipitation.
+  * **High Precipitation Risk:** Mexico City (~74 mm) and Madrid (~58 mm) represent extreme rainfall zones with lower wind exposure.
 
 Visual 3 (Extreme Weather & Risk Dashboard):
 ![Low_temp/Precipitation](Graphs/Weather_3.png)
-- Coldest Recorded Locations: Uses record_min_temp to dynamically isolate and rank cities experiencing extreme freezing thresholds.
-- Heavy Precipitation & Anomaly Tracking: Highlights localized rainfall extremes to support municipal risk modeling, energy grid planning, and infrastructure impact assessments.
+* **Coldest Locations Analysis:** Moscow captures the lowest minimum temperature at **3.10 °C**, closely followed by Wiener Neustadt (~4 °C) and Toronto (~4.5 °C)[cite: 4]. Conversely, coastal and southern locations like Barcelona anchor the upper bound of record minimums at **17.20 °C**[cite: 4].
+* **Precipitation Distribution:** Rainfall accumulation is heavily concentrated in a few key metropolitan areas, peaking with Mexico City at **74.10 mm** and Madrid at **58.30 mm**[cite: 4]. Most remaining cities recorded under **25 mm** during the observed period.
+* **Macro KPI Highlights:** Establishes key threshold metrics across all monitored regions—pinpointing the absolute minimum temperature benchmark (**3.10 °C**) and peak cumulative rainfall (**74.10 mm**)[cite: 4].
