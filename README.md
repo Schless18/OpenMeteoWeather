@@ -33,4 +33,16 @@ The analytical output centers on structured, dimensional datasets tailored for w
 * **Data Architecture:** Medallion Architecture (Bronze ➔ Silver ➔ Gold)
 * **External API:** Open-Meteo Forecast & Geocoding REST API
 
-## Key Analysis & Gold Layer Deliverables
+## Key Weather Analytics & Insights
+
+Visual 1 (General Overview): Graphs/Weather_1.png
+- Operational Metrics: Establishes cross-city macro-climate baselines across temperature trends, solar duration, and wind profiles.
+- Data Ingestion: Aggregates processed multi-region metrics from the Medallion Gold summary layer to provide an initial high-level exploratory view.
+
+Visual 2 (Comparative & Risk Analysis): Graphs/Weather_2.png
+- Actual vs. "Feels Like" Discrepancy: Evaluates humidity and wind chill divergence using a Clustered Bar Chart to assess real thermal impact across monitored urban hubs.
+- Severe Weather Vulnerability Matrix: Maps Maximum Wind Speed (km/h) against Total Precipitation (mm) in a Scatter Plot to isolate severe weather outliers (e.g., high precipitation in Mexico City and Madrid, elevated wind risks in coastal Sydney).
+
+Visual 3 (Extreme Weather & Risk Dashboard): Graphs/Weather_3.png
+- Coldest Recorded Locations: Uses record_min_temp to dynamically isolate and rank cities experiencing extreme freezing thresholds.
+- Heavy Precipitation & Anomaly Tracking: Highlights localized rainfall extremes to support municipal risk modeling, energy grid planning, and infrastructure impact assessments.
