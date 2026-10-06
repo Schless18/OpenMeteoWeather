@@ -36,6 +36,7 @@ The analytical output centers on structured, dimensional datasets tailored for w
 ## Key Weather Analytics & Insights
 
 Visual 1 (General Overview): Graphs/Weather_1.png
+<img width="1909" height="1024" alt="image" src="[https://[github.com/user-attachments/assets](https://github.com/Schless18/OpenMeteoWeather/tree/main/Graphs)/9f9ed483-2977-4e6c-ad3c-3990d97396fb](https://github.com/Schless18/OpenMeteoWeather/tree/main/Graphs/Weather_1.png)" />
 - Operational Metrics: Establishes cross-city macro-climate baselines across temperature trends, solar duration, and wind profiles.
 - Data Ingestion: Aggregates processed multi-region metrics from the Medallion Gold summary layer to provide an initial high-level exploratory view.
 
